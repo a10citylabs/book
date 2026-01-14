@@ -34,6 +34,12 @@
 
     .header-left {
       display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .title-section {
+      display: flex;
       flex-direction: column;
       gap: 0.25rem;
     }
@@ -47,6 +53,27 @@
       font-size: 0.75rem;
       opacity: 0.7;
       font-weight: 400;
+    }
+
+    .menu-btn {
+      background: #16213e;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .menu-btn:hover {
+      background: #0f3460;
+      transform: translateY(-1px);
+    }
+
+    .menu-btn:active {
+      transform: translateY(0);
     }
 
     .controls {
@@ -470,6 +497,11 @@
         font-size: 1rem;
       }
 
+      .menu-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+      }
+
       .controls button {
         padding: 0.4rem 0.8rem;
         font-size: 0.85rem;
@@ -491,11 +523,13 @@
 <body>
   <header>
     <div class="header-left">
-      <h1 id="book-title">Loading...</h1>
-      <div id="current-chapter"></div>
+      <div class="title-section">
+        <h1 id="book-title">Loading...</h1>
+        <div id="current-chapter"></div>
+      </div>
+      <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
     </div>
     <div class="controls">
-      <button onclick="toggleSidebar()">☰ Menu</button>
       <button onclick="cycleTheme()">🎨 Theme</button>
       <button onclick="decreaseFontSize()">A-</button>
       <button onclick="increaseFontSize()">A+</button>
