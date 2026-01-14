@@ -28,6 +28,20 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .title-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
     }
 
     header h1 {
@@ -35,9 +49,37 @@
       font-weight: 500;
     }
 
+    #current-chapter {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      font-weight: 400;
+    }
+
+    .menu-btn {
+      background: #16213e;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .menu-btn:hover {
+      background: #0f3460;
+      transform: translateY(-1px);
+    }
+
+    .menu-btn:active {
+      transform: translateY(0);
+    }
+
     .controls {
       display: flex;
       gap: 0.5rem;
+      flex-wrap: wrap;
     }
 
     .controls button {
@@ -48,10 +90,225 @@
       border-radius: 4px;
       cursor: pointer;
       font-size: 0.9rem;
+      transition: all 0.2s;
     }
 
     .controls button:hover {
       background: #0f3460;
+      transform: translateY(-1px);
+    }
+
+    .controls button:active {
+      transform: translateY(0);
+    }
+
+    /* Sidebar */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: -350px;
+      width: 350px;
+      height: 100vh;
+      background: white;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      transition: left 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #sidebar.open {
+      left: 0;
+    }
+
+    .sidebar-header {
+      padding: 1rem;
+      background: #1a1a2e;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sidebar-header h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    #close-sidebar {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-tabs {
+      display: flex;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .sidebar-tab {
+      flex: 1;
+      padding: 0.75rem;
+      background: #f5f5f5;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .sidebar-tab.active {
+      background: white;
+      font-weight: 500;
+    }
+
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    #toc-list {
+      list-style: none;
+    }
+
+    .toc-item {
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      background: #f9f9f9;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+    }
+
+    .toc-item:hover {
+      background: #e8e8e8;
+      border-left-color: #1a1a2e;
+    }
+
+    .toc-item.active {
+      background: #e3f2fd;
+      border-left-color: #2196F3;
+      font-weight: 500;
+    }
+
+    #search-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    #search-results {
+      list-style: none;
+    }
+
+    .search-result {
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      background: #f9f9f9;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .search-result:hover {
+      background: #e8e8e8;
+    }
+
+    .search-excerpt {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.25rem;
+    }
+
+    .search-highlight {
+      background: yellow;
+      font-weight: 500;
+    }
+
+    #bookmarks-list {
+      list-style: none;
+    }
+
+    .bookmark-item {
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      background: #f9f9f9;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .bookmark-info {
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .bookmark-info:hover {
+      color: #1a1a2e;
+    }
+
+    .bookmark-label {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .bookmark-chapter {
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 0.25rem;
+    }
+
+    .delete-bookmark {
+      background: #f44336;
+      color: white;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #999;
+      padding: 2rem;
+    }
+
+    /* Overlay */
+    #sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+
+    #sidebar-overlay.active {
+      display: block;
     }
 
     #reader-container {
@@ -82,6 +339,7 @@
       font-size: 1.5rem;
       color: #333;
       z-index: 10;
+      transition: all 0.2s;
     }
 
     .nav-btn:hover {
@@ -95,12 +353,70 @@
       background: #1a1a2e;
       color: white;
       padding: 0.75rem;
-      text-align: center;
-      font-size: 0.85rem;
     }
 
-    #progress {
-      opacity: 0.8;
+    #progress-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    #progress-text {
+      text-align: center;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      opacity: 0.9;
+    }
+
+    #progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #4CAF50, #2196F3);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+
+    .chapter-marker {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Add bookmark button */
+    #bookmark-current {
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #2196F3;
+      color: white;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      z-index: 100;
+      transition: all 0.2s;
+    }
+
+    #bookmark-current:hover {
+      transform: scale(1.1);
+      background: #1976D2;
+    }
+
+    #bookmark-current.bookmarked {
+      background: #FFC107;
     }
 
     /* Dark mode */
@@ -117,6 +433,38 @@
       background: rgba(255, 255, 255, 0.1);
     }
 
+    body.dark #sidebar {
+      background: #2d2d2d;
+      color: #e0e0e0;
+    }
+
+    body.dark .sidebar-tab {
+      background: #1a1a1a;
+      color: #e0e0e0;
+    }
+
+    body.dark .sidebar-tab.active {
+      background: #2d2d2d;
+    }
+
+    body.dark .toc-item,
+    body.dark .search-result,
+    body.dark .bookmark-item {
+      background: #1a1a1a;
+      color: #e0e0e0;
+    }
+
+    body.dark .toc-item:hover,
+    body.dark .search-result:hover {
+      background: #333;
+    }
+
+    body.dark #search-input {
+      background: #1a1a1a;
+      color: #e0e0e0;
+      border-color: #444;
+    }
+
     /* Sepia mode */
     body.sepia {
       background: #f4ecd8;
@@ -125,18 +473,94 @@
     body.sepia #reader {
       background: #faf8f1;
     }
+
+    body.sepia #sidebar {
+      background: #faf8f1;
+    }
+
+    body.sepia .sidebar-tab {
+      background: #f4ecd8;
+    }
+
+    body.sepia .sidebar-tab.active {
+      background: #faf8f1;
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      #sidebar {
+        width: 100%;
+        left: -100%;
+      }
+
+      header h1 {
+        font-size: 1rem;
+      }
+
+      .menu-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+      }
+
+      .controls button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+      }
+
+      #bookmark-current {
+        bottom: 80px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+      }
+
+      .nav-btn {
+        padding: 1.5rem 0.75rem;
+      }
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1 id="book-title">Loading...</h1>
+    <div class="header-left">
+      <div class="title-section">
+        <h1 id="book-title">Loading...</h1>
+        <div id="current-chapter"></div>
+      </div>
+      <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
+    </div>
     <div class="controls">
-      <button onclick="cycleTheme()">Theme</button>
+      <button onclick="cycleTheme()">🎨 Theme</button>
       <button onclick="decreaseFontSize()">A-</button>
       <button onclick="increaseFontSize()">A+</button>
-      <button onclick="toggleToc()">Contents</button>
     </div>
   </header>
+
+  <!-- Sidebar -->
+  <div id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <h2>Navigation</h2>
+      <button id="close-sidebar" onclick="closeSidebar()">×</button>
+    </div>
+    <div class="sidebar-tabs">
+      <button class="sidebar-tab active" onclick="switchTab('contents')">Contents</button>
+      <button class="sidebar-tab" onclick="switchTab('search')">Search</button>
+      <button class="sidebar-tab" onclick="switchTab('bookmarks')">Bookmarks</button>
+    </div>
+    <div class="sidebar-content">
+      <div id="contents-panel" class="tab-panel active">
+        <ul id="toc-list"></ul>
+      </div>
+      <div id="search-panel" class="tab-panel">
+        <input type="text" id="search-input" placeholder="Search in book..." />
+        <ul id="search-results"></ul>
+      </div>
+      <div id="bookmarks-panel" class="tab-panel">
+        <ul id="bookmarks-list"></ul>
+      </div>
+    </div>
+  </div>
 
   <div id="reader-container">
     <button class="nav-btn" id="prev" onclick="rendition.prev()">‹</button>
@@ -144,8 +568,15 @@
     <button class="nav-btn" id="next" onclick="rendition.next()">›</button>
   </div>
 
+  <button id="bookmark-current" onclick="toggleBookmark()" title="Toggle Bookmark">★</button>
+
   <footer>
-    <span id="progress">0% complete</span>
+    <div id="progress-container">
+      <div id="progress-text">0% complete</div>
+      <div id="progress-bar-container">
+        <div id="progress-bar"></div>
+      </div>
+    </div>
   </footer>
 
   <script>
@@ -156,6 +587,10 @@
       spread: "none"
     });
 
+    let currentLocation = null;
+    let tocItems = [];
+    let bookmarks = JSON.parse(localStorage.getItem("bookmarks") || "[]");
+
     rendition.display();
 
     // Update title
@@ -163,14 +598,45 @@
       document.getElementById("book-title").textContent = meta.title || "E-Book";
     });
 
+    // Load TOC
+    book.loaded.navigation.then(nav => {
+      tocItems = nav.toc;
+      const tocList = document.getElementById("toc-list");
+      tocList.innerHTML = "";
+
+      nav.toc.forEach((item, index) => {
+        const li = document.createElement("li");
+        li.className = "toc-item";
+        li.textContent = item.label;
+        li.onclick = () => {
+          rendition.display(item.href);
+          closeSidebar();
+        };
+        li.dataset.href = item.href;
+        tocList.appendChild(li);
+      });
+    });
+
     // Track progress
     book.ready.then(() => {
       return book.locations.generate(1024);
     }).then(() => {
       rendition.on("relocated", location => {
+        currentLocation = location;
         const progress = Math.round(location.start.percentage * 100);
-        document.getElementById("progress").textContent = `${progress}% complete`;
+
+        // Update progress text and bar
+        document.getElementById("progress-text").textContent = `${progress}% complete`;
+        document.getElementById("progress-bar").style.width = `${progress}%`;
+
+        // Update current chapter
+        updateCurrentChapter(location);
+
+        // Save position
         localStorage.setItem("book-progress", location.start.cfi);
+
+        // Update bookmark button
+        updateBookmarkButton();
       });
 
       // Restore position
@@ -178,10 +644,31 @@
       if (saved) rendition.display(saved);
     });
 
+    // Update current chapter display
+    function updateCurrentChapter(location) {
+      const currentHref = location.start.href;
+      const chapterEl = document.getElementById("current-chapter");
+
+      // Find matching TOC item
+      const chapter = tocItems.find(item => currentHref.includes(item.href));
+      if (chapter) {
+        chapterEl.textContent = chapter.label;
+
+        // Highlight in TOC
+        document.querySelectorAll(".toc-item").forEach(item => {
+          item.classList.remove("active");
+          if (item.dataset.href === chapter.href) {
+            item.classList.add("active");
+          }
+        });
+      }
+    }
+
     // Keyboard navigation
     document.addEventListener("keyup", e => {
       if (e.key === "ArrowLeft") rendition.prev();
       if (e.key === "ArrowRight") rendition.next();
+      if (e.key === "Escape") closeSidebar();
     });
 
     // Theme cycling
@@ -192,36 +679,223 @@
       document.body.classList.remove(...themes);
       currentTheme = (currentTheme + 1) % themes.length;
       document.body.classList.add(themes[currentTheme]);
-      
+      localStorage.setItem("theme", themes[currentTheme]);
+
       // Update epub.js theme
       const isDark = themes[currentTheme] === "dark";
       rendition.themes.default({
-        body: { 
+        body: {
           color: isDark ? "#e0e0e0" : "#333",
           background: isDark ? "#2d2d2d" : themes[currentTheme] === "sepia" ? "#faf8f1" : "#fff"
         }
       });
     }
 
+    // Restore theme
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      currentTheme = themes.indexOf(savedTheme);
+      document.body.classList.add(savedTheme);
+      setTimeout(() => cycleTheme() && cycleTheme(), 100);
+    }
+
     // Font size
-    let fontSize = 100;
+    let fontSize = parseInt(localStorage.getItem("fontSize") || "100");
+    rendition.themes.fontSize(`${fontSize}%`);
 
     function increaseFontSize() {
       fontSize = Math.min(150, fontSize + 10);
       rendition.themes.fontSize(`${fontSize}%`);
+      localStorage.setItem("fontSize", fontSize);
     }
 
     function decreaseFontSize() {
       fontSize = Math.max(70, fontSize - 10);
       rendition.themes.fontSize(`${fontSize}%`);
+      localStorage.setItem("fontSize", fontSize);
     }
 
-    // Table of contents
-    function toggleToc() {
-      book.loaded.navigation.then(nav => {
-        const items = nav.toc.map(ch => ch.label).join("\n");
-        alert("Contents:\n\n" + items);
+    // Sidebar
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("sidebar-overlay");
+      sidebar.classList.toggle("open");
+      overlay.classList.toggle("active");
+    }
+
+    function closeSidebar() {
+      document.getElementById("sidebar").classList.remove("open");
+      document.getElementById("sidebar-overlay").classList.remove("active");
+    }
+
+    function switchTab(tabName) {
+      // Update tab buttons
+      document.querySelectorAll(".sidebar-tab").forEach(tab => {
+        tab.classList.remove("active");
       });
+      event.target.classList.add("active");
+
+      // Update tab panels
+      document.querySelectorAll(".tab-panel").forEach(panel => {
+        panel.classList.remove("active");
+      });
+      document.getElementById(`${tabName}-panel`).classList.add("active");
+    }
+
+    // Search functionality
+    let searchTimeout;
+    document.getElementById("search-input").addEventListener("input", (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => performSearch(e.target.value), 300);
+    });
+
+    async function performSearch(query) {
+      const resultsEl = document.getElementById("search-results");
+
+      if (!query || query.length < 3) {
+        resultsEl.innerHTML = '<li class="empty-state">Enter at least 3 characters to search</li>';
+        return;
+      }
+
+      resultsEl.innerHTML = '<li class="empty-state">Searching...</li>';
+
+      try {
+        const results = await book.spine.spineItems.reduce(async (promiseAcc, item) => {
+          const acc = await promiseAcc;
+          try {
+            const doc = await item.load(book.load.bind(book));
+            const text = doc.body.textContent;
+            const lowerText = text.toLowerCase();
+            const lowerQuery = query.toLowerCase();
+
+            let index = lowerText.indexOf(lowerQuery);
+            while (index !== -1 && acc.length < 50) {
+              const start = Math.max(0, index - 40);
+              const end = Math.min(text.length, index + query.length + 40);
+              let excerpt = text.substring(start, end);
+
+              // Highlight the match
+              const matchStart = index - start;
+              const matchEnd = matchStart + query.length;
+              excerpt = excerpt.substring(0, matchStart) +
+                       '<span class="search-highlight">' +
+                       excerpt.substring(matchStart, matchEnd) +
+                       '</span>' +
+                       excerpt.substring(matchEnd);
+
+              acc.push({
+                href: item.href,
+                excerpt: "..." + excerpt + "..."
+              });
+
+              index = lowerText.indexOf(lowerQuery, index + 1);
+            }
+          } catch (err) {
+            console.error("Error searching item:", err);
+          }
+          return acc;
+        }, Promise.resolve([]));
+
+        if (results.length === 0) {
+          resultsEl.innerHTML = '<li class="empty-state">No results found</li>';
+        } else {
+          resultsEl.innerHTML = results.map((result, i) => `
+            <li class="search-result" onclick="rendition.display('${result.href}'); closeSidebar();">
+              <div class="search-excerpt">${result.excerpt}</div>
+            </li>
+          `).join("");
+        }
+      } catch (err) {
+        console.error("Search error:", err);
+        resultsEl.innerHTML = '<li class="empty-state">Search error occurred</li>';
+      }
+    }
+
+    // Bookmarks
+    function toggleBookmark() {
+      if (!currentLocation) return;
+
+      const cfi = currentLocation.start.cfi;
+      const existingIndex = bookmarks.findIndex(b => b.cfi === cfi);
+
+      if (existingIndex >= 0) {
+        bookmarks.splice(existingIndex, 1);
+      } else {
+        const chapter = tocItems.find(item =>
+          currentLocation.start.href.includes(item.href)
+        );
+
+        bookmarks.push({
+          cfi: cfi,
+          chapter: chapter ? chapter.label : "Unknown chapter",
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+      updateBookmarkButton();
+      renderBookmarks();
+    }
+
+    function updateBookmarkButton() {
+      if (!currentLocation) return;
+
+      const btn = document.getElementById("bookmark-current");
+      const isBookmarked = bookmarks.some(b => b.cfi === currentLocation.start.cfi);
+      btn.classList.toggle("bookmarked", isBookmarked);
+      btn.title = isBookmarked ? "Remove Bookmark" : "Add Bookmark";
+    }
+
+    function renderBookmarks() {
+      const list = document.getElementById("bookmarks-list");
+
+      if (bookmarks.length === 0) {
+        list.innerHTML = '<li class="empty-state">No bookmarks yet<br>Click the ★ button to bookmark a page</li>';
+        return;
+      }
+
+      list.innerHTML = bookmarks.map((bookmark, index) => `
+        <li class="bookmark-item">
+          <div class="bookmark-info" onclick="rendition.display('${bookmark.cfi}'); closeSidebar();">
+            <div class="bookmark-label">${bookmark.chapter}</div>
+            <div class="bookmark-chapter">${new Date(bookmark.timestamp).toLocaleDateString()}</div>
+          </div>
+          <button class="delete-bookmark" onclick="deleteBookmark(${index})">×</button>
+        </li>
+      `).join("");
+    }
+
+    function deleteBookmark(index) {
+      bookmarks.splice(index, 1);
+      localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+      renderBookmarks();
+      updateBookmarkButton();
+    }
+
+    // Initialize bookmarks
+    renderBookmarks();
+
+    // Touch gestures for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.getElementById("reader").addEventListener("touchstart", e => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.getElementById("reader").addEventListener("touchend", e => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    });
+
+    function handleSwipe() {
+      const swipeThreshold = 50;
+      if (touchEndX < touchStartX - swipeThreshold) {
+        rendition.next();
+      }
+      if (touchEndX > touchStartX + swipeThreshold) {
+        rendition.prev();
+      }
     }
   </script>
 </body>
