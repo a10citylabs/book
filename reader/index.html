@@ -3,210 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline';">
+  <meta name="color-scheme" content="light dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' blob: 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self' blob: data: *; frame-src blob: data:; object-src blob: data:; form-action 'none';">
   <title>E-Book Reader</title>
-  <script type="module">
-    import 'https://cdn.jsdelivr.net/npm/foliate-js@1.0.1/view.js'
-
-    const init = async () => {
-      const view = document.createElement('foliate-view')
-      const container = document.getElementById('viewer')
-      container.appendChild(view)
-
-      // Setup navigation buttons
-      const prev = document.getElementById('prev')
-      const next = document.getElementById('next')
-
-      prev.addEventListener('click', () => view.prev())
-      next.addEventListener('click', () => view.next())
-
-      // Keyboard navigation
-      document.addEventListener('keydown', e => {
-        if (e.key === 'ArrowLeft') view.prev()
-        if (e.key === 'ArrowRight') view.next()
-      })
-
-      // Track progress and location
-      view.addEventListener('relocate', event => {
-        const { fraction, range, index } = event.detail
-        const percent = Math.round(fraction * 100)
-        document.getElementById('progress').textContent = `${percent}% complete`
-
-        // Save progress
-        localStorage.setItem('book-progress', JSON.stringify({ index, range }))
-      })
-
-      // Load event
-      view.addEventListener('load', event => {
-        console.log('Section loaded:', event.detail)
-      })
-
-      // Theme support
-      let currentTheme = localStorage.getItem('theme') || 'light'
-      applyTheme(currentTheme)
-
-      window.cycleTheme = () => {
-        const themes = ['light', 'sepia', 'dark']
-        const currentIndex = themes.indexOf(currentTheme)
-        currentTheme = themes[(currentIndex + 1) % themes.length]
-        localStorage.setItem('theme', currentTheme)
-        applyTheme(currentTheme)
-      }
-
-      function applyTheme(theme) {
-        document.body.className = theme
-        const themeStyles = {
-          light: {
-            body: { color: '#000', background: '#fff' },
-            link: { color: '#0066cc' }
-          },
-          sepia: {
-            body: { color: '#5f4b32', background: '#f4ecd8' },
-            link: { color: '#916f3f' }
-          },
-          dark: {
-            body: { color: '#e0e0e0', background: '#1a1a1a' },
-            link: { color: '#66b3ff' }
-          }
-        }
-        if (view.renderer?.setStyles) {
-          view.renderer.setStyles(themeStyles[theme])
-        }
-      }
-
-      // Font size controls
-      let fontSize = parseInt(localStorage.getItem('fontSize') || '100')
-
-      window.increaseFontSize = () => {
-        fontSize = Math.min(200, fontSize + 10)
-        localStorage.setItem('fontSize', fontSize)
-        if (view.renderer?.setStyles) {
-          view.renderer.setStyles({ fontSize: `${fontSize}%` })
-        }
-      }
-
-      window.decreaseFontSize = () => {
-        fontSize = Math.max(50, fontSize - 10)
-        localStorage.setItem('fontSize', fontSize)
-        if (view.renderer?.setStyles) {
-          view.renderer.setStyles({ fontSize: `${fontSize}%` })
-        }
-      }
-
-      // Table of contents
-      window.toggleToc = () => {
-        if (view.book?.toc) {
-          const tocItems = view.book.toc.map((item, i) => `${i + 1}. ${item.label || item.href}`)
-          alert('Contents:\n\n' + tocItems.join('\n'))
-        } else {
-          alert('Table of contents not available')
-        }
-      }
-
-      // Open the book
-      try {
-        await view.open('book.epub')
-
-        // Update title
-        if (view.book?.metadata?.title) {
-          document.getElementById('book-title').textContent = view.book.metadata.title
-        }
-
-        // Apply saved theme and font size
-        applyTheme(currentTheme)
-        if (view.renderer?.setStyles) {
-          view.renderer.setStyles({ fontSize: `${fontSize}%` })
-        }
-
-        // Restore position
-        const saved = localStorage.getItem('book-progress')
-        if (saved) {
-          try {
-            const location = JSON.parse(saved)
-            await view.goTo(location.index)
-          } catch (e) {
-            console.error('Failed to restore position:', e)
-          }
-        }
-      } catch (err) {
-        console.error('Failed to load book:', err)
-        document.getElementById('book-title').textContent = 'Error loading book'
-      }
-    }
-
-    // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init)
-    } else {
-      init()
-    }
-  </script>
   <style>
+    :root {
+      --active-bg: rgba(0, 0, 0, .05);
+      --toolbar-bg: rgba(255, 255, 255, 0.95);
+      --border-color: rgba(0, 0, 0, .1);
+    }
+
+    @supports (color-scheme: light dark) {
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --active-bg: rgba(255, 255, 255, .1);
+          --toolbar-bg: rgba(26, 26, 26, 0.95);
+          --border-color: rgba(255, 255, 255, .1);
+        }
+      }
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
+    html {
+      height: 100%;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f5f5f5;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      background: #1a1a2e;
-      color: white;
-      padding: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header h1 {
-      font-size: 1.2rem;
-      font-weight: 500;
-    }
-
-    .controls {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .controls button {
-      background: #16213e;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: background 0.2s;
-    }
-
-    .controls button:hover {
-      background: #0f3460;
-    }
-
-    #reader-container {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      position: relative;
-    }
-
-    #viewer {
-      background: white;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-      width: 100%;
-      max-width: 900px;
-      height: 80vh;
-      position: relative;
-      overflow: hidden;
+      margin: 0;
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: Canvas;
+      color: CanvasText;
     }
 
     foliate-view {
@@ -215,95 +47,736 @@
       display: block;
     }
 
-    .nav-btn {
+    /* Toolbar styling */
+    .toolbar {
+      box-sizing: border-box;
       position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0, 0, 0, 0.1);
-      border: none;
-      padding: 2rem 1rem;
-      cursor: pointer;
-      font-size: 1.5rem;
-      color: #333;
       z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 48px;
+      padding: 6px;
+      background: var(--toolbar-bg);
+      backdrop-filter: blur(10px);
+      transition: opacity 250ms ease, transform 250ms ease;
+    }
+
+    .toolbar button {
+      padding: 6px;
+      border-radius: 6px;
+      background: none;
+      border: 0;
+      color: currentcolor;
+      cursor: pointer;
       transition: background 0.2s;
     }
 
-    .nav-btn:hover {
-      background: rgba(0, 0, 0, 0.2);
+    .toolbar button:hover {
+      background: var(--active-bg);
     }
 
-    .nav-btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
+    .icon {
+      display: block;
+      fill: none;
+      stroke: currentcolor;
+      stroke-width: 2px;
+      width: 24px;
+      height: 24px;
     }
 
-    #prev { left: 0; }
-    #next { right: 0; }
-
-    footer {
-      background: #1a1a2e;
-      color: white;
-      padding: 0.75rem;
-      text-align: center;
-      font-size: 0.85rem;
+    #header-bar {
+      top: 0;
+      border-bottom: 1px solid var(--border-color);
     }
 
-    #progress {
-      opacity: 0.8;
+    #nav-bar {
+      bottom: 0;
+      border-top: 1px solid var(--border-color);
     }
 
-    /* Dark mode */
-    body.dark {
-      background: #1a1a1a;
+    /* Progress slider */
+    #progress-slider {
+      flex-grow: 1;
+      margin: 0 12px;
+      height: 4px;
+      cursor: pointer;
+      appearance: none;
+      background: var(--border-color);
+      border-radius: 2px;
     }
 
-    body.dark #viewer {
-      background: #2d2d2d;
+    #progress-slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: currentcolor;
+      cursor: pointer;
     }
 
-    body.dark .nav-btn {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.1);
+    #progress-slider::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: currentcolor;
+      border: 0;
+      cursor: pointer;
     }
 
-    body.dark .nav-btn:hover {
-      background: rgba(255, 255, 255, 0.2);
+    /* Sidebar */
+    #dimming-overlay {
+      visibility: hidden;
+      position: fixed;
+      z-index: 11;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, .3);
+      opacity: 0;
+      transition: visibility 0s linear 300ms, opacity 300ms ease;
     }
 
-    /* Sepia mode */
-    body.sepia {
-      background: #f4ecd8;
+    #dimming-overlay.show {
+      visibility: visible;
+      opacity: 1;
+      transition-delay: 0s;
     }
 
-    body.sepia #viewer {
-      background: #faf8f1;
+    #side-bar {
+      visibility: hidden;
+      box-sizing: border-box;
+      position: absolute;
+      z-index: 12;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 320px;
+      max-width: 80vw;
+      transform: translateX(-320px);
+      display: flex;
+      flex-direction: column;
+      background: Canvas;
+      color: CanvasText;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, .2), 0 0 40px rgba(0, 0, 0, .2);
+      transition: visibility 0s linear 300ms, transform 300ms ease;
     }
 
-    body.sepia .nav-btn {
-      color: #5f4b32;
+    #side-bar.show {
+      visibility: visible;
+      transform: translateX(0);
+      transition-delay: 0s;
+    }
+
+    #side-bar-header {
+      padding: 1rem;
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      align-items: center;
+    }
+
+    #side-bar-cover {
+      height: 10vh;
+      min-height: 60px;
+      max-height: 120px;
+      border-radius: 3px;
+      border: 0;
+      background: lightgray;
+      box-shadow: 0 0 1px rgba(0, 0, 0, .1), 0 0 16px rgba(0, 0, 0, .1);
+      margin-inline-end: 1rem;
+    }
+
+    #side-bar-cover:not([src]) {
+      display: none;
+    }
+
+    #side-bar-title {
+      margin: .5rem 0;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    #side-bar-author {
+      margin: .5rem 0;
+      font-size: 0.875rem;
+      color: GrayText;
+    }
+
+    /* Table of Contents */
+    #toc-view {
+      padding: .5rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    #toc-view li, #toc-view ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    #toc-view a {
+      display: block;
+      border-radius: 6px;
+      padding: 8px 8px 8px 24px;
+      margin: 2px 0;
+      color: CanvasText;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    #toc-view a:hover {
+      background: var(--active-bg);
+    }
+
+    #toc-view [aria-current="true"] {
+      font-weight: bold;
+      background: var(--active-bg);
+    }
+
+    #toc-view .toc-item-expandable {
+      position: relative;
+    }
+
+    #toc-view .toc-expand-icon {
+      position: absolute;
+      left: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      fill: currentcolor;
+      opacity: 0.5;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    #toc-view .toc-expand-icon:hover {
+      opacity: 1;
+    }
+
+    #toc-view [aria-expanded="false"] .toc-expand-icon {
+      transform: translateY(-50%) rotate(-90deg);
+    }
+
+    #toc-view [aria-expanded="false"] + ol {
+      display: none;
+    }
+
+    #toc-view ol ol a {
+      padding-left: 40px;
+    }
+
+    #toc-view ol ol ol a {
+      padding-left: 56px;
+    }
+
+    /* Settings Menu */
+    .menu-container {
+      position: relative;
+    }
+
+    .menu {
+      visibility: hidden;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 6px;
+      background: Canvas;
+      color: CanvasText;
+      border-radius: 6px;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, .2), 0 0 16px rgba(0, 0, 0, .1);
+      padding: 6px;
+      min-width: 200px;
+      z-index: 20;
+    }
+
+    .menu.show {
+      visibility: visible;
+    }
+
+    .menu-section {
+      padding: 6px 0;
+    }
+
+    .menu-section:not(:last-child) {
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .menu-label {
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: GrayText;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .menu-item {
+      display: block;
+      padding: 8px 12px 8px 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.2s;
+    }
+
+    .menu-item:hover {
+      background: var(--active-bg);
+    }
+
+    .menu-item[aria-checked="true"]::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentcolor;
+    }
+
+    .menu-item-button {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      border: none;
+      background: none;
+      color: currentcolor;
+      text-align: left;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: inherit;
+      font-family: inherit;
+    }
+
+    .menu-item-button:hover {
+      background: var(--active-bg);
+    }
+
+    /* Progress text */
+    #progress-text {
+      font-size: 0.75rem;
+      color: GrayText;
+      white-space: nowrap;
+      padding: 0 6px;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      #side-bar {
+        width: 280px;
+      }
+
+      #progress-text {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1 id="book-title">Loading...</h1>
-    <div class="controls">
-      <button onclick="cycleTheme()">Theme</button>
-      <button onclick="decreaseFontSize()">A-</button>
-      <button onclick="increaseFontSize()">A+</button>
-      <button onclick="toggleToc()">Contents</button>
-    </div>
-  </header>
+  <div id="dimming-overlay" aria-hidden="true"></div>
 
-  <div id="reader-container">
-    <button class="nav-btn" id="prev">‹</button>
-    <div id="viewer"></div>
-    <button class="nav-btn" id="next">›</button>
+  <div id="side-bar">
+    <div id="side-bar-header">
+      <img id="side-bar-cover" alt="Book cover">
+      <div>
+        <h1 id="side-bar-title"></h1>
+        <p id="side-bar-author"></p>
+      </div>
+    </div>
+    <div id="toc-view"></div>
   </div>
 
-  <footer>
-    <span id="progress">0% complete</span>
-  </footer>
+  <div id="header-bar" class="toolbar">
+    <button id="side-bar-button" aria-label="Show sidebar" title="Table of Contents">
+      <svg class="icon" aria-hidden="true">
+        <path d="M 4 6 h 16 M 4 12 h 16 M 4 18 h 16"/>
+      </svg>
+    </button>
+    <div class="menu-container">
+      <button id="menu-button" aria-label="Show settings" aria-haspopup="true" title="Settings">
+        <svg class="icon" aria-hidden="true">
+          <path d="M5 12.7a7 7 0 0 1 0-1.4l-1.8-2 2-3.5 2.7.5a7 7 0 0 1 1.2-.7L10 3h4l.9 2.6 1.2.7 2.7-.5 2 3.4-1.8 2a7 7 0 0 1 0 1.5l1.8 2-2 3.5-2.7-.5a7 7 0 0 1-1.2.7L14 21h-4l-.9-2.6a7 7 0 0 1-1.2-.7l-2.7.5-2-3.4 1.8-2Z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+      <div id="settings-menu" class="menu">
+        <div class="menu-section">
+          <div class="menu-label">Layout</div>
+          <div class="menu-item" role="radio" aria-checked="true" data-layout="paginated">Paginated</div>
+          <div class="menu-item" role="radio" aria-checked="false" data-layout="scrolled">Scrolled</div>
+        </div>
+        <div class="menu-section">
+          <div class="menu-label">Reading</div>
+          <div class="menu-item" role="checkbox" aria-checked="true" data-setting="justify">Justify Text</div>
+          <div class="menu-item" role="checkbox" aria-checked="true" data-setting="hyphenate">Hyphenation</div>
+        </div>
+        <div class="menu-section">
+          <button class="menu-item-button" id="font-size-decrease">Decrease Font Size</button>
+          <button class="menu-item-button" id="font-size-increase">Increase Font Size</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="nav-bar" class="toolbar">
+    <button id="left-button" aria-label="Go left" title="Previous Page">
+      <svg class="icon" aria-hidden="true">
+        <path d="M 15 6 L 9 12 L 15 18"/>
+      </svg>
+    </button>
+    <input id="progress-slider" type="range" min="0" max="1" step="any" title="Book progress">
+    <datalist id="tick-marks"></datalist>
+    <span id="progress-text">0%</span>
+    <button id="right-button" aria-label="Go right" title="Next Page">
+      <svg class="icon" aria-hidden="true">
+        <path d="M 9 6 L 15 12 L 9 18"/>
+      </svg>
+    </button>
+  </div>
+
+  <script type="module">
+    import 'https://cdn.jsdelivr.net/npm/foliate-js@1.0.1/view.js'
+
+    const $ = (selector) => document.querySelector(selector)
+    const percentFormat = new Intl.NumberFormat('en', { style: 'percent' })
+
+    const getCSS = ({ spacing, justify, hyphenate }) => `
+      @namespace epub "http://www.idpf.org/2007/ops";
+      html {
+        color-scheme: light dark;
+      }
+      @media (prefers-color-scheme: dark) {
+        a:link { color: lightblue; }
+      }
+      p, li, blockquote, dd {
+        line-height: ${spacing};
+        text-align: ${justify ? 'justify' : 'start'};
+        -webkit-hyphens: ${hyphenate ? 'auto' : 'manual'};
+        hyphens: ${hyphenate ? 'auto' : 'manual'};
+        -webkit-hyphenate-limit-before: 3;
+        -webkit-hyphenate-limit-after: 2;
+        -webkit-hyphenate-limit-lines: 2;
+        hanging-punctuation: allow-end last;
+        widows: 2;
+      }
+      [align="left"] { text-align: left; }
+      [align="right"] { text-align: right; }
+      [align="center"] { text-align: center; }
+      [align="justify"] { text-align: justify; }
+      pre { white-space: pre-wrap !important; }
+      aside[epub|type~="endnote"],
+      aside[epub|type~="footnote"],
+      aside[epub|type~="note"],
+      aside[epub|type~="rearnote"] {
+        display: none;
+      }
+    `
+
+    class Reader {
+      view = null
+      currentTocHref = null
+      style = {
+        spacing: 1.4,
+        justify: true,
+        hyphenate: true,
+      }
+
+      constructor() {
+        this.setupSidebar()
+        this.setupMenu()
+        this.setupKeyboardNav()
+      }
+
+      setupSidebar() {
+        $('#side-bar-button').addEventListener('click', () => {
+          $('#dimming-overlay').classList.add('show')
+          $('#side-bar').classList.add('show')
+        })
+
+        $('#dimming-overlay').addEventListener('click', () => {
+          $('#dimming-overlay').classList.remove('show')
+          $('#side-bar').classList.remove('show')
+        })
+      }
+
+      setupMenu() {
+        const menu = $('#settings-menu')
+
+        $('#menu-button').addEventListener('click', () => {
+          menu.classList.toggle('show')
+        })
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!e.target.closest('.menu-container')) {
+            menu.classList.remove('show')
+          }
+        })
+
+        // Layout options
+        menu.querySelectorAll('[data-layout]').forEach(item => {
+          item.addEventListener('click', () => {
+            const layout = item.dataset.layout
+            menu.querySelectorAll('[data-layout]').forEach(i => i.setAttribute('aria-checked', 'false'))
+            item.setAttribute('aria-checked', 'true')
+            if (this.view?.renderer) {
+              this.view.renderer.setAttribute('flow', layout)
+            }
+          })
+        })
+
+        // Reading settings
+        menu.querySelectorAll('[data-setting]').forEach(item => {
+          item.addEventListener('click', () => {
+            const checked = item.getAttribute('aria-checked') === 'true'
+            item.setAttribute('aria-checked', !checked)
+            const setting = item.dataset.setting
+            this.style[setting] = !checked
+            this.updateStyles()
+          })
+        })
+
+        // Font size controls
+        let fontSize = parseInt(localStorage.getItem('fontSize') || '100')
+
+        $('#font-size-increase').addEventListener('click', () => {
+          fontSize = Math.min(200, fontSize + 10)
+          localStorage.setItem('fontSize', fontSize)
+          this.updateFontSize(fontSize)
+        })
+
+        $('#font-size-decrease').addEventListener('click', () => {
+          fontSize = Math.max(50, fontSize - 10)
+          localStorage.setItem('fontSize', fontSize)
+          this.updateFontSize(fontSize)
+        })
+      }
+
+      updateStyles() {
+        if (this.view?.renderer?.setStyles) {
+          this.view.renderer.setStyles(getCSS(this.style))
+        }
+      }
+
+      updateFontSize(size) {
+        if (this.view?.renderer?.setStyles) {
+          this.view.renderer.setStyles({ fontSize: `${size}%` })
+        }
+      }
+
+      setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+          if (!this.view) return
+          const key = e.key
+          if (key === 'ArrowLeft' || key === 'h') {
+            e.preventDefault()
+            this.view.goLeft()
+          } else if (key === 'ArrowRight' || key === 'l') {
+            e.preventDefault()
+            this.view.goRight()
+          }
+        })
+      }
+
+      createTOC(toc) {
+        const createTOCItem = (item, level = 0) => {
+          const li = document.createElement('li')
+          const hasChildren = item.subitems && item.subitems.length > 0
+
+          if (hasChildren) {
+            li.classList.add('toc-item-expandable')
+            const wrapper = document.createElement('div')
+            wrapper.setAttribute('aria-expanded', 'true')
+
+            const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+            icon.classList.add('toc-expand-icon')
+            icon.setAttribute('viewBox', '0 0 24 24')
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+            path.setAttribute('d', 'M 8 10 L 12 14 L 16 10')
+            path.setAttribute('fill', 'none')
+            path.setAttribute('stroke', 'currentcolor')
+            path.setAttribute('stroke-width', '2')
+            icon.appendChild(path)
+
+            icon.addEventListener('click', (e) => {
+              e.stopPropagation()
+              const expanded = wrapper.getAttribute('aria-expanded') === 'true'
+              wrapper.setAttribute('aria-expanded', !expanded)
+            })
+
+            wrapper.appendChild(icon)
+            li.appendChild(wrapper)
+          }
+
+          const link = document.createElement('a')
+          link.href = '#'
+          link.textContent = item.label || item.href
+          link.setAttribute('data-href', item.href)
+          link.addEventListener('click', (e) => {
+            e.preventDefault()
+            this.view.goTo(item.href).catch(err => console.error(err))
+            $('#dimming-overlay').classList.remove('show')
+            $('#side-bar').classList.remove('show')
+          })
+
+          if (hasChildren) {
+            li.querySelector('div').appendChild(link)
+          } else {
+            li.appendChild(link)
+          }
+
+          if (hasChildren) {
+            const ol = document.createElement('ol')
+            item.subitems.forEach(subitem => {
+              ol.appendChild(createTOCItem(subitem, level + 1))
+            })
+            li.appendChild(ol)
+          }
+
+          return li
+        }
+
+        const container = $('#toc-view')
+        container.innerHTML = ''
+        const ol = document.createElement('ol')
+        toc.forEach(item => {
+          ol.appendChild(createTOCItem(item))
+        })
+        container.appendChild(ol)
+      }
+
+      updateCurrentTOC(href) {
+        if (!href) return
+        $('#toc-view').querySelectorAll('a').forEach(link => {
+          link.removeAttribute('aria-current')
+        })
+        const currentLink = $('#toc-view').querySelector(`a[data-href="${href}"]`)
+        if (currentLink) {
+          currentLink.setAttribute('aria-current', 'true')
+        }
+      }
+
+      async open(file) {
+        this.view = document.createElement('foliate-view')
+        document.body.appendChild(this.view)
+
+        this.view.addEventListener('load', ({ detail: { doc } }) => {
+          doc.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'h') this.view.goLeft()
+            else if (e.key === 'ArrowRight' || e.key === 'l') this.view.goRight()
+          })
+        })
+
+        this.view.addEventListener('relocate', ({ detail }) => {
+          const { fraction, location, tocItem, pageItem } = detail
+          const percent = percentFormat.format(fraction)
+          const loc = pageItem ? `Page ${pageItem.label}` : `Loc ${location.current}`
+
+          const slider = $('#progress-slider')
+          slider.value = fraction
+          slider.title = `${percent} · ${loc}`
+          $('#progress-text').textContent = percent
+
+          if (tocItem?.href) {
+            this.updateCurrentTOC(tocItem.href)
+          }
+
+          // Save progress
+          localStorage.setItem('book-progress', JSON.stringify({ fraction, location }))
+        })
+
+        await this.view.open(file)
+
+        const { book } = this.view
+
+        // Setup navigation buttons
+        $('#left-button').addEventListener('click', () => this.view.goLeft())
+        $('#right-button').addEventListener('click', () => this.view.goRight())
+
+        // Setup progress slider
+        const slider = $('#progress-slider')
+        slider.dir = book.dir || 'ltr'
+        slider.addEventListener('input', (e) => {
+          this.view.goToFraction(parseFloat(e.target.value))
+        })
+
+        // Add section markers to slider
+        const tickMarks = $('#tick-marks')
+        for (const fraction of this.view.getSectionFractions()) {
+          const option = document.createElement('option')
+          option.value = fraction
+          tickMarks.appendChild(option)
+        }
+
+        // Apply styles
+        this.updateStyles()
+        const savedFontSize = parseInt(localStorage.getItem('fontSize') || '100')
+        this.updateFontSize(savedFontSize)
+
+        // Navigate to first page
+        this.view.renderer.next()
+
+        // Update metadata
+        const title = book.metadata?.title || 'Untitled Book'
+        const author = book.metadata?.author || 'Unknown Author'
+
+        document.title = title
+        $('#side-bar-title').textContent = title
+        $('#side-bar-author').textContent = author
+
+        // Load cover
+        if (book.getCover) {
+          try {
+            const blob = await book.getCover()
+            if (blob) {
+              $('#side-bar-cover').src = URL.createObjectURL(blob)
+            }
+          } catch (e) {
+            console.error('Failed to load cover:', e)
+          }
+        }
+
+        // Create TOC
+        if (book.toc) {
+          this.createTOC(book.toc)
+        }
+
+        // Restore saved progress
+        try {
+          const saved = localStorage.getItem('book-progress')
+          if (saved) {
+            const { location } = JSON.parse(saved)
+            await this.view.goTo(location)
+          }
+        } catch (e) {
+          console.error('Failed to restore progress:', e)
+        }
+      }
+    }
+
+    // Initialize
+    const init = async () => {
+      const reader = new Reader()
+      window.reader = reader
+
+      try {
+        await reader.open('book.epub')
+      } catch (err) {
+        console.error('Failed to load book:', err)
+        alert('Error loading book. Please check the console for details.')
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init)
+    } else {
+      init()
+    }
+  </script>
 </body>
 </html>
